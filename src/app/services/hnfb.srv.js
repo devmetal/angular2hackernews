@@ -1,8 +1,7 @@
 'use strict';
 
-import {Injectable}   from 'angular2/core';
-import Firebase       from 'firebase';
-import {EventEmitter} from 'events';
+import { Injectable } from 'angular2/core';
+import Firebase      	from 'firebase';
 
 let ref = new Firebase('https://hacker-news.firebaseio.com/v0/');
 
@@ -23,41 +22,43 @@ let retreiveAsync = (key) => {
 	});
 };
 
+let isStory = (x) => x.type === 'story';
+
+let hasUrl  = (x) => x.url && x.url.length > 0;
+
 @Injectable()
 export default class {
 	constructor() {}
 
-	async topstories(limit) {
-		let isStory = (x) => x.type === 'story';
-		let hasUrl  = (x) => x.url && x.url.length > 0;
+	async item(id) {
+		return await retreiveAsync(id);
+	}
 
+	async topstories(limit) {
 		let storyKeys = await keysAsync('topstories', limit);
 		let stories   = await Promise.all(storyKeys.map(retreiveAsync));
 
 		return stories
-			.filter(s => isStory(s) && hasUrl(s))
-			.sort((a,b) => b.score - a.score);
+			.filter(s => isStory(s) && hasUrl(s));
 	}
 
 	async newstories(limit) {
-		let isStory = (x) => x.type === 'story';
-		let hasUrl  = (x) => x.url && x.url.length > 0;
-
 		let storyKeys = await keysAsync('newstories', limit);
 		let stories   = await Promise.all(storyKeys.map(retreiveAsync));
 
 		return stories
-			.filter(s => isStory(s) && hasUrl(s))
-			.sort((a,b) => b.score - a.score);
+			.filter(s => isStory(s) && hasUrl(s));
 	}
 
 	async kids(item) {
 		let keys = item.kids || [];
 
-		if (!keys || !keys.length) {
+		if (!keys.length) {
 			return [];
 		}
 
-		return await Promise.all(keys.map(retreiveAsync));
+		let childs = await Promise.all(keys.map(retreiveAsync));
+
+		return childs;
 	}
 }
