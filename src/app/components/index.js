@@ -1,19 +1,15 @@
 'use strict';
 
-import Preloader   from './preloader.cmp';
-import Items       from './items.cmp';
-import Newstories  from './newstories.cmp';
-import Topstories  from './topstories.cmp';
-import Comment     from './comment.cmp';
-import Item        from './item.cmp';
-import Favorites   from './favorites.cmp';
+import Preloader       from './preloader.cmp';
+import Items           from './items.cmp';
+import Item            from './item.cmp';
+import Comment         from './comment.cmp';
+import { CommentList } from './comment-list.cmp';
 
 export {
   Preloader,
-  Item,
-  Newstories,
-  Topstories,
   Comment,
+  Items,
   Item,
-  Favorites
+  CommentList
 };

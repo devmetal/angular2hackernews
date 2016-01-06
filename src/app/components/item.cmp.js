@@ -2,46 +2,56 @@
 
 import {
   Component,
-  Input
+  Input,
+  Output,
+  Attribute,
+  EventEmitter
 } from 'angular2/core';
 
 import {
-  NgFor,
   NgIf
 } from 'angular2/common';
 
 import {
-  RouteParams
+  ROUTER_DIRECTIVES
 } from 'angular2/router';
 
-import { HnFb } from '../services';
-
-import { CommentList } from './comment-list.cmp';
+import { ItemModel } from '../models';
 
 @Component({
-  selector:'item',
-  template:`
-    <dl *ngIf='item'>
-      <dt>
-        <a [href]='item.url' target='_blank'><strong>{{item.title}}</strong></a>
-      </dt>
-      <comment-list *ngIf='!!kids.length' [comments]='kids'></comment-list>
-    </dl>
-  `,
-  directives: [NgFor, NgIf, CommentList]
+  selector: 'item',
+  directives: [NgIf, ROUTER_DIRECTIVES],
+  template: `
+    <div>
+      <a [href]='item.url' target='_blank'>{{item.title}}</a>
+    </div>
+    <div class='info'>
+      <ul>
+        <li>{{item.score}}</li>
+        <li>by {{item.by}}</li>
+        <li>{{item.timeAgo()}}</li>
+        <li><a [routerLink]="['/Item', {id: item._id}]">comments</a></li>
+        <li *ngIf='!favorite'><a href="#" (click)='clickOnFavorite($event)'>favorite</a></li>
+      </ul>
+    </div>
+  `
 })
 export default class {
-  constructor(db: HnFb, routeParam: RouteParams) {
-    this.db = db;
-    this.item = null;
-    this.kids = [];
-    this.routeParam = routeParam;
-    this.fetchItem();
+  @Input()
+  item: ItemModel;
+
+  @Input()
+  favorite;
+
+  @Output('on-favorite')
+  onFavorite: EventEmitter;
+
+  constructor(){
+    this.onFavorite = new EventEmitter();
   }
 
-  async fetchItem() {
-    let id = this.routeParam.params.id;
-    this.item = await this.db.item(id);
-    this.kids = await this.db.kids(this.item);
+  clickOnFavorite($event) {
+    $event.preventDefault();
+    this.onFavorite.emit('event');
   }
 }

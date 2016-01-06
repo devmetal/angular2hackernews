@@ -13,11 +13,8 @@ import {
   NgIf
 } from 'angular2/common';
 
-import {
-  ROUTER_DIRECTIVES
-} from 'angular2/router';
-
 import Preloader from './preloader.cmp';
+import Item      from './item.cmp';
 
 import { FavoritesDb } from '../services';
 
@@ -26,17 +23,7 @@ import { FavoritesDb } from '../services';
   template:`
   <dl>
       <dt *ngFor='#item of items'>
-        <div>
-          <a [href]='item.url' target='_blank'>{{item.title}}</a>
-        </div>
-        <div class='info'>
-          <ul>
-            <li>{{item.score}}</li>
-            <li>by {{item.by}}</li>
-            <li><a [routerLink]="['/Item', {id: item.id}]">comments</a></li>
-            <li><a href="#" (click)='favorite(item, $event)'>favorite</a></li>
-          </ul>
-        </div>
+        <item [item]='item' (on-favorite)='favorite(item)' [favorite]='isFavorite(item)'></item>
       </dt>
   </dl>
   <div>
@@ -44,7 +31,7 @@ import { FavoritesDb } from '../services';
     <button class='button' *ngIf='!isPending' (click)='viewMore()'>View More</button>
   </div>
   `,
-  directives:[NgFor, NgIf, Preloader, ROUTER_DIRECTIVES]
+  directives:[NgFor, NgIf, Preloader, Item]
 })
 export default class {
   @Input()
@@ -57,7 +44,9 @@ export default class {
   viewMoreEvent: EventEmitter;
 
   constructor(favorites: FavoritesDb) {
-    this.favorites = favorites;
+    this.fv = favorites;
+    this.favorites = [];
+    this.getFavorites();
     this.viewMoreEvent = new EventEmitter();
   }
 
@@ -65,12 +54,20 @@ export default class {
     this.viewMoreEvent.emit('event');
   }
 
-  async favorite(item, $event) {
-    $event.preventDefault();
-    let result = await this.favorites.save(item);
+  async favorite(item) {
+    let result = await this.fv.save(item);
     if (result === true) {
       item.favorited = true;
     }
+  }
+
+  async getFavorites() {
+    this.favorites = await this.fv.findAllId();
+  }
+
+  isFavorite(item) {
+    return !!this.favorites.length
+      && this.favorites.indexOf(item._id) !== -1;
   }
 
   get isPending() {

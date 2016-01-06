@@ -8,7 +8,7 @@ import {
   Newstories,
   Favorites,
   Item
-} from './components';
+} from './pages';
 
 @Component({
   selector: 'my-app',

@@ -2,8 +2,9 @@
 
 import { Injectable } from 'angular2/core';
 import Firebase      	from 'firebase';
+import { ItemModel }  from '../models';
 
-let ref = new Firebase('https://hacker-news.firebaseio.com/v0/');
+const ref = new Firebase('https://hacker-news.firebaseio.com/v0/');
 
 const DEF_LIMIT = 200;
 
@@ -31,7 +32,8 @@ export default class {
 	constructor() {}
 
 	async item(id) {
-		return await retreiveAsync(id);
+		let i = await retreiveAsync(id);
+		return new ItemModel(i);
 	}
 
 	async topstories(limit) {
@@ -39,7 +41,8 @@ export default class {
 		let stories   = await Promise.all(storyKeys.map(retreiveAsync));
 
 		return stories
-			.filter(s => isStory(s) && hasUrl(s));
+			.filter(s => isStory(s) && hasUrl(s))
+			.map(s => new ItemModel(s));
 	}
 
 	async newstories(limit) {
@@ -47,7 +50,8 @@ export default class {
 		let stories   = await Promise.all(storyKeys.map(retreiveAsync));
 
 		return stories
-			.filter(s => isStory(s) && hasUrl(s));
+			.filter(s => isStory(s) && hasUrl(s))
+			.map(s => new ItemModel(s));
 	}
 
 	async kids(item) {
@@ -59,6 +63,7 @@ export default class {
 
 		let childs = await Promise.all(keys.map(retreiveAsync));
 
-		return childs;
+		return childs
+			.map(c => new ItemModel(c));
 	}
 }

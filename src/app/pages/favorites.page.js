@@ -5,7 +5,7 @@ import { NgFor } from 'angular2/common';
 import { FavoritesDb }   from '../services';
 
 @Component({
-  selector: 'favorites',
+  selector: 'favorites-page',
   template: `
     <h1>Favorites</h1>
     <dl>

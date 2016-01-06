@@ -2,13 +2,13 @@
 
 import { Component } from 'angular2/core';
 
-import Items    from './items.cmp';
-import { HnFb } from '../services';
+import { Items } from '../components';
+import { HnFb }  from '../services';
 
 @Component({
-  selector:'topstories',
+  selector:'newstories-page',
   template:`
-    <h1>Topstories</h1>
+    <h1>New Stories</h1>
     <items
       [items]='stories'
       [pending]='pending'
@@ -21,19 +21,12 @@ export default class {
   constructor(db: HnFb) {
     this.db = db;
     this.stories = [];
-    this.n = 25;
     this.pending = true;
-    this.fetchStories(25);
+    this.fetchStories();
   }
 
-  viewMore() {
-    this.n += 25;
-    this.pending = true;
-    this.fetchStories(this.n);
-  }
-
-  async fetchStories(n = 25) {
-    this.stories = await this.db.topstories(n);
+  async fetchStories() {
+    this.stories = await this.db.newstories(50);
     this.pending = false;
   }
 }

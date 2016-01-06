@@ -12,13 +12,6 @@ export default class {
   }
 
   async save(item) {
-
-    item = Object.assign(item, {
-      _id: `${item.id}`
-    });
-
-    console.log(item);
-
     try {
       let resp = await this.db.put(item);
       console.log(resp);
@@ -46,11 +39,37 @@ export default class {
       });
 
       if (items.rows) {
-        return items.rows.map(row => row.doc);
+        return items.rows.map(row => new ItemModel(row.doc));
       } else {
-        return false;
+        return [];
       }
     } catch(err) {
+      return false;
+    }
+  }
+
+  async isFavorite(item) {
+    try {
+      
+    } catch(err) {
+
+    }
+  }
+
+  async findAllId() {
+    try {
+      let items = await this.db.allDocs({
+        include_docs: false
+      });
+      console.log(items);
+      if (items.rows) {
+        console.log(items.rows);
+        return items.rows.map(row => row.id);
+      } else {
+        return [];
+      }
+    } catch(err) {
+      console.log(err);
       return false;
     }
   }

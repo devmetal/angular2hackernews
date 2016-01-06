@@ -1,6 +1,6 @@
 'use strict';
 
-import ItemModel from './Item.model';
+import { ItemModel } from './Item.model';
 
 export {
   ItemModel
