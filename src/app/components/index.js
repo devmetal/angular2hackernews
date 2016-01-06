@@ -6,6 +6,7 @@ import Newstories  from './newstories.cmp';
 import Topstories  from './topstories.cmp';
 import Comment     from './comment.cmp';
 import Item        from './item.cmp';
+import Favorites   from './favorites.cmp';
 
 export {
   Preloader,
@@ -13,5 +14,6 @@ export {
   Newstories,
   Topstories,
   Comment,
-  Item
+  Item,
+  Favorites
 };

@@ -19,6 +19,8 @@ import {
 
 import Preloader from './preloader.cmp';
 
+import { FavoritesDb } from '../services';
+
 @Component({
   selector:'items',
   template:`
@@ -32,6 +34,7 @@ import Preloader from './preloader.cmp';
             <li>{{item.score}}</li>
             <li>by {{item.by}}</li>
             <li><a [routerLink]="['/Item', {id: item.id}]">comments</a></li>
+            <li><a href="#" (click)='favorite(item, $event)'>favorite</a></li>
           </ul>
         </div>
       </dt>
@@ -53,12 +56,21 @@ export default class {
   @Output('view-more')
   viewMoreEvent: EventEmitter;
 
-  constructor() {
+  constructor(favorites: FavoritesDb) {
+    this.favorites = favorites;
     this.viewMoreEvent = new EventEmitter();
   }
 
   viewMore() {
     this.viewMoreEvent.emit('event');
+  }
+
+  async favorite(item, $event) {
+    $event.preventDefault();
+    let result = await this.favorites.save(item);
+    if (result === true) {
+      item.favorited = true;
+    }
   }
 
   get isPending() {

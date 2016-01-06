@@ -1,6 +1,6 @@
 'use strict';
 
-import { Component, Input, ViewMetadata, ComponentMetadata } from 'angular2/core';
+import { ViewMetadata, ComponentMetadata } from 'angular2/core';
 import { NgFor, NgIf }     from 'angular2/common';
 
 import Comment  from './comment.cmp';

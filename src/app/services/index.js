@@ -1,5 +1,9 @@
 'use strict';
 
-import HnFb from './hnfb.srv';
+import HnFb      from './hnfb.srv';
+import FavoritesDb from './favorites.srv';
 
-export { HnFb };
+export {
+  HnFb,
+  FavoritesDb
+};

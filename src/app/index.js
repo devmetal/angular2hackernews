@@ -6,6 +6,7 @@ import { RouteConfig, ROUTER_DIRECTIVES } from 'angular2/router';
 import {
   Topstories,
   Newstories,
+  Favorites,
   Item
 } from './components';
 
@@ -18,6 +19,7 @@ import {
       <ul class='float-right'>
         <li><a [routerLink]="['Topstories']">Topstories</a></li>
         <li><a [routerLink]="['Newstories']">Newstories</a></li>
+        <li><a [routerLink]="['Favorites']">Favorites</a></li>
       </ul>
     </div>
   </nav>
@@ -33,9 +35,10 @@ import {
   directives: [ROUTER_DIRECTIVES]
 })
 @RouteConfig([
-  {path: '/',         name:'Topstories', component: Topstories},
-  {path: '/news',     name:'Newstories', component: Newstories},
-  {path: '/item/:id', name:'Item',       component: Item}
+  {path: '/',          name:'Topstories', component: Topstories},
+  {path: '/news',      name:'Newstories', component: Newstories},
+  {path: '/item/:id',  name:'Item',       component: Item},
+  {path: '/favorites', name:'Favorites',  component: Favorites}
 ])
 class AppComponent {
   constructor() {}
