@@ -21,4 +21,6 @@ gulp.task('default', ['serve'], function() {
     }
     qrcode.generate(`http://${ip.address}:3000`);
   }
+
+  gulp.watch('./src/sass/**/*.scss', ['sass']);
 });
