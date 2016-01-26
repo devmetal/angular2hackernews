@@ -3,7 +3,9 @@
 import moment from 'moment';
 
 export class ItemModel {
-  _id;
+  fid;
+  _pid;
+  _rev;
   by;
   time;
   text;
@@ -13,7 +15,9 @@ export class ItemModel {
   kids;
 
   constructor(item) {
-    this._id   = "" + item.id;
+    this.fid   = item.id;
+    this._pid  = item._id || "";
+    this._rev  = item._rev || "";
     this.by    = item.by;
     this.time  = item.time;
     this.text  = item.text || "";
@@ -24,7 +28,10 @@ export class ItemModel {
   }
 
   timeAgo() {
-    return moment.unix(this.time)
-      .fromNow();
+    return moment.unix(this.time).fromNow();
+  }
+
+  isFavorite() {
+    return typeof this._pid !== 'undefined';
   }
 }

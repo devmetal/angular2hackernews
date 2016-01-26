@@ -1,8 +1,8 @@
 'use strict';
 
-import { Injectable } from 'angular2/core';
-import Firebase      	from 'firebase';
-import { ItemModel }  from '../models';
+import { Injectable }  from 'angular2/core';
+import Firebase      	 from 'firebase';
+import { ItemModel }   from '../models';
 
 const ref = new Firebase('https://hacker-news.firebaseio.com/v0/');
 

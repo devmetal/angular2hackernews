@@ -12,7 +12,7 @@ import { NgIf } from 'angular2/common';
 @Component({
   selector:'comment',
   template: `
-    <div><a href="" *ngIf='hasReply' (click)='expand($event)'> + </a> <strong> {{item.by}} </strong></div>
+    <div><a href="" *ngIf='hasReply' (click)='expand($event)'> + </a> <strong> {{item.by}}</strong></div>
     <div [innerHTML]='item.text'></div>
   `,
   decorators: [NgIf]

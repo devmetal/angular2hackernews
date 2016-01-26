@@ -3,74 +3,114 @@
 import { Injectable } from 'angular2/core';
 import PouchDB        from 'pouchdb';
 import { ItemModel }  from '../models';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export default class {
 
   constructor() {
     this.db = new PouchDB('favorites');
+
+    this.datas = {
+      favorites:[]
+    };
+
+    this.loadPromise = null;
+    this.loaded = false;
+    this.favorites = null;
+    this.favoritesObserver = null;
+
+    this.initObserver();
+  }
+
+  initObserver() {
+    this.favorites = Observable.create((observer) => {
+      this.favoritesObserver = observer;
+    });
+  }
+
+  getFavorites() {
+    if (this.loaded === true) {
+      return Promise.resolve(this.datas.favorites);
+    }
+
+    if (this.loadPromise) {
+      return this.loadPromise;
+    }
+
+    let resolve, reject;
+    this.loadPromise = new Promise((res, rej) => {
+      resolve = res;
+      reject = rej;
+    });
+
+    const opts = {include_docs: true};
+    this.db.allDocs(opts)
+      .then(items  => items.rows.map(item => new ItemModel(item.doc)))
+      .then(models => {
+        this.loaded = true;
+        this.datas.favorites = models;
+        resolve(this.datas.favorites);
+        this.loadPromise = null;
+      })
+      .catch(err => {
+        this.datas.favorites = [];
+        resolve(this.datas.favorites);
+        this.loadPromise = null;
+      });
+
+    return this.loadPromise;
+  }
+
+  async loadFavorites() {
+    let items;
+
+    try {
+      const opts = {include_docs: true};
+      items = await this.db.allDocs(opts);
+    } catch(err) {
+      this.datas.favorites = [];
+    }
+
+    this.datas.favorites = items.rows.map(
+      item => new ItemModel(item.doc)
+    );
+
+    this.loaded = true;
+
+    this.favoritesObserver.next(this.datas.favorites);
   }
 
   async save(item) {
-    try {
-      let resp = await this.db.put(item);
-      console.log(resp);
-      return resp.ok === true;
-    } catch(err) {
-      console.log(err);
+    let result = await this.db.post(item);
+    if (result.ok !== true) {
+      this.favoritesObserver.error('Save error');
       return false;
     }
+
+    item._pid = result.id;
+    item._rev = result.rev;
+
+    this.datas.favorites.push(item);
+    this.favoritesObserver.next(this.datas.favorites);
+
+    return true;
   }
 
-  async delete(id) {
-    try {
-      let item = await this.db.get(id);
-      let resp = await this.db.remove(item);
-      return resp.ok === true;
-    } catch(err) {
+  async delete(item) {
+    let id = item._pid;
+    let rev = item._rev;
+    let result = await this.db.remove(id, rev);
+
+    if (result.ok !== true) {
+      this.favoritesObserver.error('Delete error');
       return false;
     }
-  }
 
-  async findAll() {
-    try {
-      let items = await this.db.allDocs({
-        include_docs: true
-      });
+    let index = this.datas.favorites.indexOf(item);
+    this.datas.favorites.splice(index, 1);
+    this.favoritesObserver.next(this.datas.favorites);
 
-      if (items.rows) {
-        return items.rows.map(row => new ItemModel(row.doc));
-      } else {
-        return [];
-      }
-    } catch(err) {
-      return false;
-    }
-  }
-
-  async isFavorite(item) {
-    try {
-      
-    } catch(err) {
-
-    }
-  }
-
-  async findAllId() {
-    try {
-      let items = await this.db.allDocs({
-        include_docs: false
-      });
-      console.log(items);
-      if (items.rows) {
-        console.log(items.rows);
-        return items.rows.map(row => row.id);
-      } else {
-        return [];
-      }
-    } catch(err) {
-      console.log(err);
-      return false;
-    }
+    return true;
   }
 }

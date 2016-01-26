@@ -17,13 +17,21 @@ import { FavoritesDb }   from '../services';
   directives: [NgFor]
 })
 export default class {
-  constructor(favorites: FavoritesDb) {
-    this.favorites = favorites;
+  constructor(db: FavoritesDb) {
+    this.db = db;
     this.items = [];
-    this.fetchAll();
   }
 
-  async fetchAll() {
-    this.items = await this.favorites.findAll();
+  ngOnInit() {
+    this.subscribtion = this.db.favorites.subscribe(
+      favorites => this.items = favorites,
+      err       => console.log(err)
+    );
+
+    this.db.getFavorites();
+  }
+
+  ngOnDestroy() {
+    this.subscribtion.unsubscribe();
   }
 }
