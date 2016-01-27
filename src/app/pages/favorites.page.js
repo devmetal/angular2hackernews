@@ -28,7 +28,7 @@ export default class {
       err       => console.log(err)
     );
 
-    this.db.getFavorites();
+    this.db.loadFavorites();
   }
 
   ngOnDestroy() {

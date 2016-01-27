@@ -3,6 +3,7 @@
 import { Injectable }  from 'angular2/core';
 import Firebase      	 from 'firebase';
 import { ItemModel }   from '../models';
+import { Observable }  from 'rxjs';
 
 const ref = new Firebase('https://hacker-news.firebaseio.com/v0/');
 
@@ -29,7 +30,9 @@ let hasUrl  = (x) => x.url && x.url.length > 0;
 
 @Injectable()
 export default class {
-	constructor() {}
+	constructor() {
+
+	}
 
 	async item(id) {
 		let i = await retreiveAsync(id);

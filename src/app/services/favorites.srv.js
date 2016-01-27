@@ -79,6 +79,7 @@ export default class {
     this.loaded = true;
 
     this.favoritesObserver.next(this.datas.favorites);
+    return this.datas.favorites;
   }
 
   async save(item) {
